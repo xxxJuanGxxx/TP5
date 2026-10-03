@@ -17,7 +17,7 @@ NUM_FILOSOFOS = 5
 # Cada tenedor está representado por un Lock (exclusión mutua)
 tenedores = [threading.Lock() for _ in range(NUM_FILOSOFOS)]
 
-# Variable para contar cuántas veces comió cada filósofo
+# Variable para contar cuántas veces comió cada filóso
 comidas = [0] * NUM_FILOSOFOS
 lock_print = threading.Lock()
 
@@ -63,15 +63,24 @@ def filosofo(id, rondas=3):
         # =========================================================================
         # INICIO TODO: Implementar adquisición y liberación segura de tenedores
         # =========================================================================
-        # PISTA: Implementa la solución asimétrica de Dijkstra (romper Espera Circular)
-        # o utiliza un semáforo árbitro para evitar el interbloqueo (Deadlock).
-        #
-        # TODO: Adquiere los tenedores adyacentes de forma segura, invoca comer(id)
-        # y libera los tenedores:
-        pass
+        # Estrategia Asimétrica de Dijkstra para romper la condición de Espera Circular:
+        # Los filósofos con ID impar toman primero el tenedor DERECHO y luego el IZQUIERDO.
+        # Los filósofos con ID par toman primero el tenedor IZQUIERDO y luego el DERECHO.
+        if id % 2 == 1:
+            primer_tenedor = tenedor_der
+            segundo_tenedor = tenedor_izq
+        else:
+            primer_tenedor = tenedor_izq
+            segundo_tenedor = tenedor_der
+
+        # Adquisición de los tenedores en el orden asignado
+        with tenedores[primer_tenedor]:
+            with tenedores[segundo_tenedor]:
+                comer(id)
         # =========================================================================
         # FIN TODO
         # =========================================================================
+
 
 if __name__ == "__main__":
     print("=" * 60)
